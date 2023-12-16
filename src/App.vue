@@ -247,7 +247,7 @@ function startNewGame(e) {
         >&#10226;</div>
       </div>
 
-      <div class="cards-container">
+      <div class="cards-container" :class="{disabled: state.step === 'set-target-card-owner'}">
         <div style="display: flex;justify-content: center;">Cards</div>
         <card v-for="i in state.playersAmount" :key="i"
               @click="onCardClick(i)"

@@ -116,6 +116,11 @@ body {
   flex-flow: column;
   gap: 10px;
   flex: 0 0 0%;
+
+  &.disabled {
+    opacity: 0.3;
+    pointer-events: none;
+  }
 }
 
 
