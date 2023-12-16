@@ -15,8 +15,8 @@ const hints = {
   'setting-players-choice': 'Specify players votes',
   'player-is-choosing-card': 'Select card',
   'ready-show-target-card': 'Specify target card',
-  'set-selected-card-owners': 'Specify owners for selected cards',
-  'score-counted': 'Game round!'
+  'set-selected-card-owners': 'Specify owners of cards with votes',
+  'score-counted': 'Round!'
 };
 let targetCardOwner = ref(null);
 const activePlayer = ref(null);
