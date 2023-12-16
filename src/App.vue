@@ -10,12 +10,12 @@ const state = reactive({
 })
 
 const hints = {
-  'set-players-amount': 'Select players amount',
-  'set-target-card-owner': 'Set of target card player',
-  'setting-players-choice': 'Set choices of players',
+  'set-players-amount': 'Number of players?',
+  'set-target-card-owner': 'Who is active player?',
+  'setting-players-choice': 'Specify players votes',
   'player-is-choosing-card': 'Select card',
-  'ready-show-target-card': 'Show target card',
-  'set-selected-card-owners': 'Set owners for other selected cards',
+  'ready-show-target-card': 'Specify target card',
+  'set-selected-card-owners': 'Specify owners for selected cards',
   'score-counted': 'Game round!'
 };
 let targetCardOwner = ref(null);
@@ -214,6 +214,7 @@ function startNewGame(e) {
          id="score-board"
     >
       <div class="players-container">
+        <div>Players</div>
         <player-button v-for="i in state.playersAmount"
                        :key="i"
                        :id="i"
@@ -247,6 +248,7 @@ function startNewGame(e) {
       </div>
 
       <div class="cards-container">
+        <div style="display: flex;justify-content: center;">Cards</div>
         <card v-for="i in state.playersAmount" :key="i"
               @click="onCardClick(i)"
               :players="cardsSelection[i]"
