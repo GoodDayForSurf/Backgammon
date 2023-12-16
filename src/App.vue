@@ -156,9 +156,9 @@ function startRound() {
   targetCardOwner.value = null;
   activePlayer.value = null;
   cardsSelection.length = 0;
-  playersChoices.value = new Map();
+  playersChoices.clear();
   selectedCard.value = null;
-  cardsOwners.value = new Map();
+  cardsOwners.value.clear();
   state.step = 'set-target-card-owner';
 }
 
