@@ -203,7 +203,7 @@ function startNewGame(e) {
     <div v-if="state.step === 'set-players-amount'"
          class="select-amount-panel"
     >
-      <button v-for="i in 4"
+      <button v-for="i in 5"
               :key="i"
               @click="setPlayersAmount(i + 2)"
               style="cursor: pointer"

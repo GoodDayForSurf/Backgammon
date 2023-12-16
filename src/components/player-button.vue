@@ -45,6 +45,7 @@ function onClick() {
   <div class="container">
     <div class="player-btn center"
          :class="{
+      ['color-'+props.id]: true,
     disabled: props.disabled,
     owner: props.isOwner,
     selected: props.selected
@@ -90,7 +91,8 @@ function onClick() {
   font-size: 24px;
 
   &.owner {
-    background-color: darkcyan;
+    pointer-events: none;
+    box-shadow: 0 0 10px 3px fuchsia;
     color: #f8f8f8;
 
     sup {
@@ -111,5 +113,41 @@ function onClick() {
     margin-left: 4px;
     color: rgb(128, 128, 128);
   }
+}
+
+
+.color-1 {
+  background-color: orange;
+}
+
+.color-2 {
+  background-color: red;
+  color: white;
+}
+
+.color-3 {
+  background-color: green;
+  color: white;
+}
+
+.color-4 {
+  background-color: blue;
+  color: white;
+}
+
+.color-5 {
+  background-color: black;
+  color: white;
+}
+
+.color-6 {
+  background-color: white;
+  border: 1px solid black;
+  color: black;
+}
+
+.color-7 {
+  background-color: yellow;
+  color: black;
 }
 </style>

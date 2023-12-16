@@ -58,7 +58,7 @@ defineProps({
   }
 
   &.target {
-    background-color: coral;
+    background-color: fuchsia;
   }
 
   .number {
