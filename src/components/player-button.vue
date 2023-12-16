@@ -23,7 +23,11 @@ const props = defineProps({
   score: {
     type: Number,
     required: true,
-  }
+  },
+  selected: {
+    type: Boolean,
+    required: false,
+  },
 })
 
 const emit = defineEmits(['activate'])
@@ -42,7 +46,8 @@ function onClick() {
     <div class="player-btn center"
          :class="{
     disabled: props.disabled,
-    owner: props.isOwner
+    owner: props.isOwner,
+    selected: props.selected
   }"
          @click="onClick">
       <div class="avatar">{{props.id}}</div>
@@ -91,6 +96,10 @@ function onClick() {
     sup {
       display: none;
     }
+  }
+
+  &.selected {
+    box-shadow: 0 0 10px 3px greenyellow;
   }
 
   &.disabled {

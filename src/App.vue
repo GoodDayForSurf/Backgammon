@@ -70,8 +70,16 @@ function onCardClick(nmb) {
     if(needConfirm.value && selectedCard.value === nmb) {
       needConfirm.value = false;
       cardsOwners.value.set(nmb, targetCardOwner.value);
-      state.step = 'set-selected-card-owners';
+
       selectedCard.value = null;
+
+      if( cardsSelection[nmb]?.size === state.playersAmount - 1) {
+         countScore();
+         return;
+      } else {
+        state.step = 'set-selected-card-owners';
+      }
+
     } else {
       selectedCard.value = nmb;
       needConfirm.value = true;
@@ -97,10 +105,12 @@ function setTargetCardOwner(playerId) {
 
 function setCardOwner(playerId) {
   const cardsOwnersMap = cardsOwners.value;
+  activePlayer.value = playerId;
 
   if (needConfirm.value && cardsOwnersMap.get(selectedCard.value) === playerId) {
     needConfirm.value = false;
     selectedCard.value = null;
+    activePlayer.value = null;
 
     if (!cardsSelection.find((card, i)=> {
       return card && !cardsOwners.value.get(i)
@@ -212,13 +222,14 @@ function startNewGame(e) {
                            (state.step === 'set-selected-card-owners' &&
                             !isPlayerPointOwnCard(i)
                            ) ||
-                           (state.step === 'setting-players-choice' &&
+                           (['player-is-choosing-card', 'setting-players-choice'].includes(state.step) &&
                             !playersChoices.get(i)
                            )
                            )  "
                        :card="cardsOwners.get(i)"
                        :disabled="i !== activePlayer && activePlayer > 0"
                        :score="state.score[i]"
+                       :selected="activePlayer === i || (state.step === 'set-selected-card-owners' && activePlayer === i)"
                        @activate="state.step === 'setting-players-choice' && targetCardOwner !== i ? onPlayerActive(i) : null"
                        @click="{
                          'set-target-card-owner': () => setTargetCardOwner(i),
@@ -232,7 +243,7 @@ function startNewGame(e) {
              class="control"
              @click="startRound()"
              style="cursor: pointer"
-        >R</div>
+        >&#10226;</div>
       </div>
 
       <div class="cards-container">

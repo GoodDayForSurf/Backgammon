@@ -10,6 +10,7 @@ body {
 }
 
 .board {
+  user-select: none;
   display: flex;
   flex-flow: column;
   align-items: center;
@@ -100,14 +101,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  color: rgb(255, 69, 0);
   width: calc(var(--player-button-size));
   height: calc(var(--player-button-size));
 
   background-color: white;
-  color: black;
   border-radius: 50%;
-  border: 5px solid red;
-  font-size: 34px;
+  // border: 5px solid red;
+  font-size: 48px;
 }
 
 .cards-container {
