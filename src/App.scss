@@ -1,0 +1,126 @@
+:root {
+  --button-size: 50px;
+  --player-button-size: 50px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+}
+
+.board {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+}
+
+.hint {
+  font-size: 20px;
+  margin-bottom: 50px;
+  position: relative;
+
+  .new-game-btn {
+    cursor: pointer;
+    display: inline-block;
+    margin-left: 5px;
+    border: 1px dotted black;
+    padding: 0 10px;
+    border-radius: 10px;
+    font-size: 16px;
+  }
+
+  .confirm-marker {
+    position: absolute;
+    left: 0;
+    bottom: -20px;
+    font-size: 15px;
+    color: red;
+  }
+}
+
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.select-amount-panel {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  max-width: calc(var(--button-size) * 3);
+
+}
+
+.select-amount-panel button {
+  width: var(--button-size);
+  height: var(--button-size);
+  border-radius: 20%;
+  border-width: 0;
+  font-size: 24px;
+  transition: all 500ms;
+}
+
+.select-amount-panel button:active {
+  background-color: greenyellow;
+}
+
+#score-board {
+  display: flex;
+  flex-flow: row;
+  flex-wrap: nowrap;
+  gap: 10px;
+}
+
+.players-container {
+  display: flex;
+  flex-flow: column;
+  gap: 10px;
+  flex: 0 0 0%;
+  margin-right: 30px;
+}
+
+.center-panel {
+  flex: 1 1 60%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--button-size);
+  margin-right: 20px;
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--player-button-size));
+  height: calc(var(--player-button-size));
+
+  background-color: white;
+  color: black;
+  border-radius: 50%;
+  border: 5px solid red;
+  font-size: 34px;
+}
+
+.cards-container {
+  display: flex;
+  flex-flow: column;
+  gap: 10px;
+  flex: 0 0 0%;
+}
+
+
+
+.card {
+  width: calc(var(--player-button-size) + var(--player-button-size) / 2);
+  height: var(--player-button-size);
+
+  background-color: blueviolet;
+  color: whitesmoke;
+  border-radius: 20%;
+  border-width: 0;
+  font-size: 24px;
+}

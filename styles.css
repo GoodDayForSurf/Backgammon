@@ -83,13 +83,4 @@ body {
     font-size: 24px;
 }
 
-.card {
-    width: calc(var(--player-button-size) + var(--player-button-size) / 2);
-    height: var(--player-button-size);
 
-    background-color: blueviolet;
-    color: whitesmoke;
-    border-radius: 20%;
-    border-width: 0;
-    font-size: 24px;
-}

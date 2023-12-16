@@ -1,25 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
-<head>
+<html lang="en">
+  <head>
     <meta charset="UTF-8">
-    <title>DIXIT SCORE</title>
-    <script src="./index.js"></script>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body style="display: flex; align-items: center;justify-content: center">
-<div class="select-amount-panel" onclick="setPlayersAmount(event)">
-    <button>3</button>
-    <button>4</button>
-    <button>5</button>
-    <button>6</button>
-</div>
-
-<div id="score-board" style="display: none">
-    <div class="players-container" onclick="playerButtonClick(event)"></div>
-    <div class="center">
-        <div class="control next-btn">+</div>
-    </div>
-    <div class="cards-container"></div>
-</div>
-</body>
+    <link rel="icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIXIT Score</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
 </html>
