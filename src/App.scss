@@ -15,20 +15,25 @@ body {
   align-items: center;
 }
 
+.header {
+  display: flex;
+  align-items: flex-end;
+  height: 30px;
+
+  .new-game-btn {
+    cursor: pointer;
+    display: block;
+    border: 1px dotted black;
+    padding: 0 7px;
+    border-radius: 7px;
+    font-size: 15px;
+  }
+}
+
 .hint {
   font-size: 20px;
   margin-bottom: 50px;
   position: relative;
-
-  .new-game-btn {
-    cursor: pointer;
-    display: inline-block;
-    margin-left: 5px;
-    border: 1px dotted black;
-    padding: 0 10px;
-    border-radius: 10px;
-    font-size: 16px;
-  }
 
   .confirm-marker {
     position: absolute;

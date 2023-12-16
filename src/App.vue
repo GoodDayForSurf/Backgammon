@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import PlayerButton from './components/player-button.vue'
 import Card from './components/card.vue'
 
@@ -26,7 +26,10 @@ const selectedCard = ref(null);
 const cardsOwners = ref(new Map());
 let needConfirm = ref(false);
 
+const isNewGame = computed(() => !Object.values(state.score).find((score) => score !== 0))
+
 const lastState = localStorage.getItem('dixit-game-state');
+
 if(lastState) {
   restoreState(JSON.parse(lastState));
   startRound();
@@ -154,6 +157,10 @@ function cancelActive() {
   activePlayer.value = 0;
 }
 
+function isPlayerPointOwnCard(playerId) {
+  return [...cardsOwners.value.values()].find((value) => playerId === value)
+}
+
 function save() {
   localStorage.setItem('dixit-game-state', JSON.stringify(state))
 }
@@ -174,14 +181,13 @@ function startNewGame(e) {
 
 <template>
   <div class="board">
+    <div class="header">
+      <div v-if="!isNewGame && state.step === 'set-target-card-owner'"
+           class="new-game-btn"
+           @click="startNewGame"
+      >New Game</div>
+    </div>
     <div class="hint">{{hints[state.step]}}
-      <template v-if="Object.keys(state.score).length && state.step === 'set-target-card-owner'">
-        or
-        <span v-if="Object.keys(state.score).length && state.step === 'set-target-card-owner'"
-              class="new-game-btn"
-              @click="startNewGame"
-        >New Game</span>
-      </template>
       <div v-if="needConfirm" class="confirm-marker">Confirm?</div>
     </div>
     <div v-if="state.step === 'set-players-amount'"
@@ -202,6 +208,15 @@ function startNewGame(e) {
                        :key="i"
                        :id="i"
                        :isOwner="i === targetCardOwner"
+                       :show-card="i !== targetCardOwner && (
+                           (state.step === 'set-selected-card-owners' &&
+                            !isPlayerPointOwnCard(i)
+                           ) ||
+                           (state.step === 'setting-players-choice' &&
+                            !playersChoices.get(i)
+                           )
+                           )  "
+                       :card="cardsOwners.get(i)"
                        :disabled="i !== activePlayer && activePlayer > 0"
                        :score="state.score[i]"
                        @activate="state.step === 'setting-players-choice' && targetCardOwner !== i ? onPlayerActive(i) : null"

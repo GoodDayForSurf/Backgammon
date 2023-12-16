@@ -8,6 +8,14 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
+  card: {
+    required: false,
+  },
+  showCard: {
+    type: Boolean,
+    required: false,
+    value: false
+  },
   isOwner: {
     type: Boolean,
     required: false,
@@ -39,9 +47,9 @@ function onClick() {
          @click="onClick">
       <div class="avatar">{{props.id}}</div>
     </div>
+    <div v-show="showCard" class="card-id">?</div>
     <div class="score">{{score}}</div> <!-- v-if="props.score > 0" -->
   </div>
-
 </template>
 
 <style scoped lang="scss">
@@ -57,6 +65,12 @@ function onClick() {
     bottom: -5px;
     right: -10px;
     font-weight: bold;
+  }
+
+  .card-id {
+    position: absolute;
+    top: -5px;
+    right: -10px;
   }
 }
 
