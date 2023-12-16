@@ -28,7 +28,7 @@ defineProps({
   <div class="card" :class="{selected: isSelected, target: isTarget}">
     <div class="number">{{msg}}</div>
     <div v-if="players?.size" class="players">{{[...players].join(' ')}}</div>
-    <div v-if="owner" class="owner">{{owner}}</div>
+    <div v-if="owner" class="owner" :class="[`color-${owner}`]">{{owner}}</div>
   </div>
 </template>
 
@@ -76,9 +76,14 @@ defineProps({
   .owner {
     position: absolute;
     top: 0;
-    right: 10px;
-    color: #f8f8f8;
-    font-size: 14px;
+    right: 0px;
+    font-size: 17px;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 </style>

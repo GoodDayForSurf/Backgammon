@@ -104,22 +104,14 @@ function setTargetCardOwner(playerId) {
 }
 
 function setCardOwner(playerId) {
-  const cardsOwnersMap = cardsOwners.value;
-  activePlayer.value = playerId;
+  cardsOwners.value.set(selectedCard.value, playerId);
 
-  if (needConfirm.value && cardsOwnersMap.get(selectedCard.value) === playerId) {
-    needConfirm.value = false;
-    selectedCard.value = null;
-    activePlayer.value = null;
+  selectedCard.value = null;
 
-    if (!cardsSelection.find((card, i)=> {
-      return card && !cardsOwners.value.get(i)
-    })) {
-      countScore();
-    }
-  } else {
-    cardsOwnersMap.set(selectedCard.value, playerId);
-    needConfirm.value = true;
+  if (!cardsSelection.find((card, i)=> {
+    return card && !cardsOwners.value.get(i)
+  })) {
+    countScore();
   }
 }
 

@@ -59,10 +59,6 @@ function onClick() {
 </template>
 
 <style scoped lang="scss">
-:root {
-  --player-button-size: 50px;
-}
-
 .container {
   position: relative;
 
@@ -85,7 +81,6 @@ function onClick() {
   height: var(--player-button-size);
   cursor: pointer;
 
-  background-color: aquamarine;
   border-radius: 20%;
   border: none;
   font-size: 24px;
@@ -93,7 +88,6 @@ function onClick() {
   &.owner {
     pointer-events: none;
     box-shadow: 0 0 10px 3px fuchsia;
-    color: #f8f8f8;
 
     sup {
       display: none;
@@ -113,41 +107,5 @@ function onClick() {
     margin-left: 4px;
     color: rgb(128, 128, 128);
   }
-}
-
-
-.color-1 {
-  background-color: orange;
-}
-
-.color-2 {
-  background-color: red;
-  color: white;
-}
-
-.color-3 {
-  background-color: green;
-  color: white;
-}
-
-.color-4 {
-  background-color: blue;
-  color: white;
-}
-
-.color-5 {
-  background-color: black;
-  color: white;
-}
-
-.color-6 {
-  background-color: white;
-  border: 1px solid black;
-  color: black;
-}
-
-.color-7 {
-  background-color: yellow;
-  color: black;
 }
 </style>
