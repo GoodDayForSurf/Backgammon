@@ -20,9 +20,10 @@ const hints = {
 };
 let targetCardOwner = ref(null);
 const activePlayer = ref(null);
-const cardsSelection = reactive([]);
+const cardsSelection = reactive(new Map());
 const playersChoices = reactive(new Map());
 const selectedCard = ref(null);
+const selectedPlayers = reactive(new Set());
 const cardsOwners = ref(new Map());
 let needConfirm = ref(false);
 
@@ -53,9 +54,25 @@ function onPlayerActive(playerId) {
   state.step = 'player-is-choosing-card';
 }
 
-function onCardClick(nmb) {
-  if (state.step === 'player-is-choosing-card') {
-    cardsSelection.forEach((card) => card?.delete(activePlayer.value));
+function onCardClick(cardNmb) {
+  if (state.step === 'setting-players-choice') {
+    selectedCard.value = cardNmb;
+    if(needConfirm.value && selectedCard.value === cardNmb) {
+      needConfirm.value = false;
+      selectedPlayers.clear();
+      selectedCard.value = null;
+
+      if(isAllPlayersVoted()) {
+        state.step = 'ready-show-target-card';
+      }
+    } else if(selectedPlayers.size) {
+      selectedCard.value = cardNmb;
+      setCardVotes(cardNmb)
+      needConfirm.value = true;
+      return;
+    }
+
+    /*cardsSelection.forEach((card) => card?.delete(activePlayer.value));
     cardsSelection[nmb] = cardsSelection[nmb] || new Set();
     cardsSelection[nmb].add(activePlayer.value);
 
@@ -65,15 +82,15 @@ function onCardClick(nmb) {
 
     if (playersChoices.size === state.playersAmount - 1) {
       state.step = 'ready-show-target-card';
-    }
+    }*/
   } else if (state.step === 'ready-show-target-card') {
-    if(needConfirm.value && selectedCard.value === nmb) {
+    if(needConfirm.value && selectedCard.value === cardNmb) {
       needConfirm.value = false;
-      cardsOwners.value.set(nmb, targetCardOwner.value);
+      cardsOwners.value.set(cardNmb, targetCardOwner.value);
 
       selectedCard.value = null;
 
-      if( cardsSelection[nmb]?.size === state.playersAmount - 1) {
+      if( cardsSelection.get(cardNmb)?.size === state.playersAmount - 1) {
          countScore();
          return;
       } else {
@@ -81,12 +98,17 @@ function onCardClick(nmb) {
       }
 
     } else {
-      selectedCard.value = nmb;
+      selectedCard.value = cardNmb;
       needConfirm.value = true;
     }
-  } else if (state.step === 'set-selected-card-owners' && cardsSelection[nmb]?.size) {
-    selectedCard.value = nmb;
+  } else if (state.step === 'set-selected-card-owners' && cardsSelection.get(cardNmb)?.size) {
+    console.log('---------set-selected-card-owners->')
+    selectedCard.value = cardNmb;
   }
+}
+
+function isAllPlayersVoted(){
+  return [...cardsSelection.values()].map((players) => [...players]).flat().length === state.playersAmount - 1;
 }
 
 function setTargetCardOwner(playerId) {
@@ -103,21 +125,51 @@ function setTargetCardOwner(playerId) {
   }
 }
 
-function setCardOwner(playerId) {
-  cardsOwners.value.set(selectedCard.value, playerId);
+function setCardVotes(cardNmb) {
+  const playersSet = selectedPlayers;
+  cardsSelection.forEach((card) => playersSet.forEach((playerId) => card?.delete(playerId)));
+  cardsSelection.set(cardNmb, new Set([...playersSet]));
+}
 
-  selectedCard.value = null;
+function onPLayerBtnClick(playerId) {
 
-  if (!cardsSelection.find((card, i)=> {
-    return card && !cardsOwners.value.get(i)
-  })) {
-    countScore();
+
+  if(state.step == 'set-target-card-owner') {
+    setTargetCardOwner(playerId);
+  } else if(playerId === targetCardOwner.value) {
+    return;
+  } else if(state.step === 'setting-players-choice') {
+    needConfirm.value = false;
+
+    if(selectedPlayers.has(playerId)) {
+      selectedPlayers.delete(playerId);
+    } else {
+      selectedPlayers.add(playerId);
+    }
+
+    if(selectedCard.value) {
+      setCardVotes(selectedCard.value);
+    }
+
+  } else if (state.step == 'set-selected-card-owners'){
+    const cardOwnersMap = cardsOwners.value;
+
+    const wrongCard = [...cardOwnersMap.entries()].find(([_, vote]) => vote === playerId);
+
+    cardOwnersMap.delete(wrongCard);
+    cardOwnersMap.set(selectedCard.value, playerId);
+
+    selectedCard.value = null;
+
+    if ([...cardOwnersMap.values()].flat().length === state.playersAmount - 1) {
+      countScore();
+    }
   }
 }
 
 function countScore() {
   const targetCardNumber = Object.keys(state.score).find((playerId) => cardsOwners.value.get(+playerId) === targetCardOwner.value);
-  const targetSelections = cardsSelection[targetCardNumber];
+  const targetSelections = cardsSelection.get(targetCardNumber);
 
   if(!targetSelections || targetSelections.size === 0 || targetSelections.size === state.playersAmount - 1) {
     Object.keys(state.score).forEach((key) => {
@@ -131,7 +183,7 @@ function countScore() {
     [...targetSelections].forEach((playerId) => state.score[playerId] += 3)
   }
 
-  cardsSelection.forEach((selections, cardNumber) => {
+  cardsSelection.forEach(([selections, cardNumber]) => {
     if(cardNumber === +targetCardNumber) {
       return;
     }
@@ -147,7 +199,7 @@ function countScore() {
 function startRound() {
   targetCardOwner.value = null;
   activePlayer.value = null;
-  cardsSelection.length = 0;
+  cardsSelection.clear();
   playersChoices.clear();
   selectedCard.value = null;
   cardsOwners.value.clear();
@@ -222,13 +274,10 @@ function startNewGame(e) {
                        :card="cardsOwners.get(i)"
                        :disabled="i !== activePlayer && activePlayer > 0"
                        :score="state.score[i]"
-                       :selected="activePlayer === i || (state.step === 'set-selected-card-owners' && activePlayer === i)"
-                       @activate="state.step === 'setting-players-choice' && targetCardOwner !== i ? onPlayerActive(i) : null"
-                       @click="{
-                         'set-target-card-owner': () => setTargetCardOwner(i),
-                         'set-selected-card-owners': () => selectedCard && setCardOwner(i)
-                       }[state.step]"
-        />
+                       :selected="activePlayer === i || selectedPlayers.has(i) || (state.step === 'set-selected-card-owners' && activePlayer === i)"
+
+                       @click="onPLayerBtnClick(i)"
+        /> <!--  @activate="state.step === 'setting-players-choice' && targetCardOwner !== i ? onPlayerActive(i) : null" -->
       </div>
 
       <div class="center-panel">
@@ -243,7 +292,7 @@ function startNewGame(e) {
         <div style="display: flex;justify-content: center;">Cards</div>
         <card v-for="i in state.playersAmount" :key="i"
               @click="onCardClick(i)"
-              :players="cardsSelection[i]"
+              :players="cardsSelection.get(i)"
               :owner="cardsOwners.get(i)"
               :is-target="cardsOwners.get(i) === targetCardOwner"
               :is-selected="selectedCard === i"

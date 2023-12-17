@@ -65,7 +65,7 @@ function onClick() {
   .score {
     position: absolute;
     bottom: -5px;
-    right: -10px;
+    right: -18px;
     font-weight: bold;
   }
 
