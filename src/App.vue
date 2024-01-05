@@ -5,14 +5,16 @@ import Card from './components/card.vue'
 
 const hints = {
   'set-players-amount': 'Number of players?',
+  'on-off-player': 'Select player',
   'set-target-card-owner': 'Who is active player?',
   'setting-players-choice': 'Specify players votes',
   'ready-show-target-card': 'Specify target card',
-  'set-selected-card-owners': 'Specify owners of cards with votes',
+  'set-selected-card-owners': 'Specify owners of voted cards',
   'score-counted': 'Round!'
 };
 let playersAmount = 0;
 const step = ref('set-players-amount');
+const previousStep = ref();
 const score = reactive(new Map());
 let targetCardOwner = ref(null);
 const targetCardNmb = ref(null);
@@ -20,6 +22,7 @@ const cardsSelection = reactive(new Map());
 const playersChoices = reactive(new Map());
 const selectedCard = ref(null);
 const selectedPlayers = reactive(new Set());
+const disabledPlayers = reactive(new Set());
 const cardsOwners = reactive(new Map());
 let needConfirm = ref(false);
 
@@ -36,13 +39,28 @@ function setPlayersAmount(amount) {
   playersAmount = amount;
   score.clear();
   new Array(amount).fill(0).forEach((val, i) => score.set(i + 1, 0));
-  step.value = 'set-target-card-owner';
+  setStep('set-target-card-owner');
+}
+
+function setStep(newStep) {
+  previousStep.value = step.value;
+  step.value = newStep;
 }
 
 function onPLayerBtnClick(playerId) {
-  if(step.value === 'set-target-card-owner') {
+  if(disabledPlayers.has(playerId) && step.value !== 'on-off-player') {
+    return;
+  } else if(step.value === 'set-target-card-owner') {
     setTargetCardOwner(playerId);
-  } else if(playerId === targetCardOwner.value) {
+  } else if(step.value === 'on-off-player') {
+    if (disabledPlayers.has(playerId)){
+      disabledPlayers.delete(playerId);
+    } else {
+      disabledPlayers.add(playerId);
+    }
+    setStep(previousStep.value);
+    return;
+  }  else if(playerId === targetCardOwner.value) {
     return;
   } else if(step.value === 'setting-players-choice') {
     needConfirm.value = false;
@@ -73,9 +91,10 @@ function onPLayerBtnClick(playerId) {
 }
 
 function isAllPlayersVoted(){
-  return (playersAmount - 1) === [...cardsSelection.values()]
+  return (playersAmount - 1 - disabledPlayers.size) === [...cardsSelection.values()]
       .map((players) => [...players])
       .flat()
+      .filter(player => !disabledPlayers.has(player))
       .length;
 }
 
@@ -86,7 +105,7 @@ function setTargetCardOwner(playerId) {
   } else {
     if(needConfirm.value && targetCardOwner.value === playerId) {
       needConfirm.value = false;
-      step.value ='setting-players-choice';
+      setStep('setting-players-choice');
     } else {
       targetCardOwner.value = playerId;
     }
@@ -101,7 +120,7 @@ function onCardClick(cardNmb) {
       selectedCard.value = null;
 
       if(isAllPlayersVoted()) {
-        step.value = 'ready-show-target-card';
+        setStep('ready-show-target-card');
       }
     } else if(selectedPlayers.size) {
       selectedCard.value = cardNmb;
@@ -122,7 +141,7 @@ function onCardClick(cardNmb) {
         countScore();
         return;
       } else {
-        step.value = 'set-selected-card-owners';
+        setStep('set-selected-card-owners');
       }
     } else {
       selectedCard.value = cardNmb;
@@ -153,7 +172,7 @@ function countScore() {
 
   if(!targetCardVotes || targetCardVotes.size === 0 || targetCardVotes.size === playersAmount - 1) {
     [...score.keys()].forEach((playerId) => {
-      if (playerId !== targetCardOwner.value) {
+      if (!disabledPlayers.has(playerId) && playerId !== targetCardOwner.value) {
         addScore(playerId, 2);
       }
     });
@@ -171,7 +190,7 @@ function countScore() {
     addScore(+cardOwnerId, selections.size);
   });
 
-  step.value = 'score-counted';
+  setStep('score-counted');
   saveState();
 }
 
@@ -182,7 +201,7 @@ function startRound() {
   selectedCard.value = null;
   cardsOwners.clear();
   targetCardNmb.value = null;
-  step.value = 'set-target-card-owner';
+  setStep('set-target-card-owner');
 }
 
 function isPlayerPointOwnCard(playerId) {
@@ -206,12 +225,22 @@ function restoreState(lastState) {
   Object.entries(lastState.score).forEach(([key, value]) => key && score.set(+key, +value));
 }
 
-function startNewGame(e) {
+function startNewGame() {
   let text = "Reset score and start new Game?";
   if (confirm(text) == true) {
     localStorage.removeItem('dixit-game-state')
     location.reload();
   }
+}
+
+function onOffPlayer() {
+  setStep('on-off-player');
+}
+
+function getPlace(playerId) {
+  const playerScore = score.get(playerId);
+  const place = [...new Set([...score.values()])].sort().reverse().indexOf(playerScore);
+  return place + 1;
 }
 </script>
 
@@ -222,6 +251,11 @@ function startNewGame(e) {
            class="new-game-btn"
            @click="startNewGame"
       >New Game</div>
+      <div v-if="step === 'set-target-card-owner' || step === 'on-off-player'
+      || (step === 'setting-players-choice' && selectedPlayers.size === 0)"
+           class="new-game-btn"
+           @click="onOffPlayer"
+      >On/Off player</div>
     </div>
     <div class="hint">{{hints[step]}}
       <div v-if="needConfirm" class="confirm-marker">Confirm?</div>
@@ -242,6 +276,7 @@ function startNewGame(e) {
       <div class="players-container">
         <div>Players</div>
         <player-button v-for="i in playersAmount"
+                       :class="{disabled: disabledPlayers.has(i)}"
                        :key="i"
                        :id="i"
                        :isOwner="i === targetCardOwner"
@@ -251,7 +286,9 @@ function startNewGame(e) {
                            (step === 'setting-players-choice' && !isPlayerVoted(i))
                            )"
                        :card="cardsOwners.get(i)"
+                       :disabled="disabledPlayers.has(i)"
                        :score="score.get(i) || 0"
+                       :place="getPlace(i)"
                        :selected="selectedPlayers.has(i)"
 
                        @click="onPLayerBtnClick(i)"
@@ -266,9 +303,9 @@ function startNewGame(e) {
         >&#10226;</div>
       </div>
 
-      <div class="cards-container" :class="{disabled: step === 'set-target-card-owner'}">
+      <div class="cards-container" :class="{disabled: ['set-target-card-owner', 'on-off-player'].includes(step)}">
         <div style="display: flex;justify-content: center;">Cards</div>
-        <card v-for="i in playersAmount" :key="i"
+        <card v-for="i in (playersAmount - disabledPlayers.size)" :key="i"
               @click="onCardClick(i)"
               :players="cardsSelection.get(i)"
               :owner="cardsOwners.get(i)"

@@ -25,6 +25,10 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  place: {
+    type: Number,
+    required: true,
+  },
   selected: {
     type: Boolean,
     required: false,
@@ -34,10 +38,6 @@ const props = defineProps({
 const emit = defineEmits(['activate'])
 
 function onClick() {
-  if( props.disabled ) {
-    return
-  }
-
   emit('activate', props.id)
 }
 </script>
@@ -46,7 +46,7 @@ function onClick() {
   <div class="container">
     <div class="player-btn center"
          :class="{
-      ['color-'+props.id]: true,
+      ['color-' + props.id]: true,
     disabled: props.disabled,
     owner: props.isOwner,
     selected: props.selected
@@ -54,8 +54,9 @@ function onClick() {
          @click="onClick">
       <div class="avatar">{{props.id}}</div>
     </div>
-    <div v-show="showCard" class="card-id">?</div>
-    <div class="score">{{score}}</div> <!-- v-if="props.score > 0" -->
+    <div v-show="showCard && !disabled" class="card-id">?</div>
+    <div class="score">{{score}}</div>
+    <div :class="['place']">{{place}}</div>
   </div>
 </template>
 
@@ -68,6 +69,22 @@ function onClick() {
     bottom: -5px;
     right: -18px;
     font-weight: bold;
+  }
+
+  .place {
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    font-size: small;
+    font-weight: bold;
+    color: darkred;
+    border-radius: 50%;
+    background-color: wheat;
+    height: 14px;
+    width: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .card-id {
