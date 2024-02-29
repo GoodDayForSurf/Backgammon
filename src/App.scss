@@ -1,5 +1,5 @@
 :root {
-  --button-size: 50px;
+  --chip-size: 100vh / 12;
   --player-button-size: 54px;
 }
 
@@ -42,10 +42,16 @@ body {
   background-color: black;
   width: calc(100vh / 12);
   height: calc(100vh / 12);
-  border-width: calc(0.25 * 100vh / 12);
+  border-width: calc(0.2 * 100vh / 12);
   border-color: #333333;
   border-style: solid;
   border-radius: 50%;
+
+}
+
+.white {
+  border-color: snow;
+  background-color: silver;
 }
 
 .board-middle {
