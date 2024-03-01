@@ -15,10 +15,11 @@ body {
 
 .board {
   position: relative;
-  user-select: none;
   display: flex;
-  flex-flow: column;
   align-items: center;
+  justify-content: center;
+  user-select: none;
+  flex-flow: row;
 }
 
 .board-inner {
@@ -47,11 +48,18 @@ body {
   border-style: solid;
   border-radius: 50%;
 
+  &.white {
+    border-color: snow;
+    background-color: silver;
+  }
 }
 
-.white {
-  border-color: snow;
-  background-color: silver;
+.dices {
+  display: flex;
+  flex-flow: column;
+  line-height: 40px;
+  font-size: 60px;
+  margin: 20px;
 }
 
 .board-middle {

@@ -1,6 +1,7 @@
 <script setup>
 import { reactive, ref } from 'vue';
 import chip from './components/chip.vue'
+import dices from '@/components/dices.vue';
 
 const holders = reactive(Array.from({ length: 24 }, el => ({chips: []})));
 const chips = ['black', 'white'].flatMap(
@@ -9,6 +10,7 @@ const chips = ['black', 'white'].flatMap(
     ));
 
 const selectedChipId = ref(null);
+const dicesBlack = ref(null);
 
 chips.forEach(chip => moveChip(chip,1));
 
@@ -65,6 +67,8 @@ const onHolderClick = (holderNmb) => {
 
 <template>
   <div class="board">
+    <dices ref="dicesBlack" @click="() => dicesBlack.roll()" class="dices black" :state="'show'"/>
+
     <div class="board-inner">
       <div v-for="(_, i) in Array.from({ length: 12 })"
            class="chip-holder"
@@ -87,6 +91,7 @@ const onHolderClick = (holderNmb) => {
         </template>
     </div>
       <div class="board-middle"></div>
+    <div class="dices white"></div>
   </div>
 </template>
 <style src="./App.scss" lang="scss">
