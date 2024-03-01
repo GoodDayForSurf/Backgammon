@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { reactive, ref, watch, watchEffect } from 'vue';
 
 const props = defineProps({
   color: {
@@ -8,43 +8,46 @@ const props = defineProps({
   },
   position: {
     type: Number,
-    required: false
+    required: true
   },
 });
 
-const positionStyle = {
+const positionStyle = reactive({
   top: 'unset',
   bottom: 'unset',
   left: 'unset',
   right: 'unset',
-};
+});
 
-let index = props.position;
-let side = ['top', 'bottom'];
+watchEffect(
+    () => recalcPosition(props.position)
+)
 
-if (props.color === 'black') {
-  index = props.position < 13 ? props.position + 12 : props.position - 12;
-  // side = ['bottom', 'top'];
-}
+function recalcPosition(index) {
+  let side = ['top', 'bottom'];
+  console.log('----CHIP-position----->', index);
 
-if(index <= 12) {
-  positionStyle[side[0]] = `0`;
-  positionStyle.right = `calc(${index - 1} * var(--chip-size))`
-} else {
-  positionStyle[side[1]] = `0`;
-  positionStyle.left = `calc(${index - 13} * var(--chip-size))`
-}
-const selected = ref(false);
+  if (props.color === 'black') {
+    index = index < 13 ? index + 12 : index - 12;
+    // side = ['bottom', 'top'];
+  }
+  console.log('----CHIP-position mapped----->', index);
 
-const onclick = () => {
-  selected.value = !selected.value
+  ['top', 'bottom', 'left', 'right'].forEach(prop => positionStyle[prop] = 'unset');
+
+  if(index <= 12) {
+    positionStyle[side[0]] = `0`;
+    positionStyle.right = `calc(${index - 1} * var(--chip-size))`
+  } else {
+    positionStyle[side[1]] = `0`;
+    positionStyle.left = `calc(${index - 13} * var(--chip-size))`
+  }
 }
 </script>
 
 <template>
   <div class="chip"
-       @click="onclick()"
-       :class="{[props.color]: true, selected: selected}"
+       :class="{[props.color]: true}"
        :style="positionStyle"
 
   ></div>
@@ -59,8 +62,6 @@ const onclick = () => {
   cursor: pointer;
 }
 
-.selected {
-  filter: drop-shadow(2px 4px 7px green);
-}
+
 
 </style>
