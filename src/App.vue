@@ -1,8 +1,11 @@
 <script setup>
 import { reactive, ref } from 'vue';
+import { longs } from './rules-long.js'
 import chip from './components/chip.vue'
 import dices from '@/components/dices.vue';
 
+
+const rules = longs;
 const holders = reactive(Array.from({ length: 24 }, el => ({chips: []})));
 const chips = ['black', 'white'].flatMap(
     (color) => Array.from({ length: 15 }).map(
@@ -10,7 +13,14 @@ const chips = ['black', 'white'].flatMap(
     ));
 
 const selectedChipId = ref(null);
-const dicesBlack = ref(null);
+const dicesRef = ref(null);
+const diceState = ref('wait');
+const game = reactive({
+  step: 'start',
+  currentPlayer: Math.random() > 0.5 ? 'black' : 'white',
+});
+
+function isWhiteTurn() { return game.currentPlayer === 'white' }
 
 chips.forEach(chip => moveChip(chip,1));
 
@@ -28,6 +38,7 @@ function moveChip(chip, position) {
   const fromHolder = getChipHolder(chip);
 
   fromHolder?.chips.pop();
+  chip.prevPosition = chip.position;
   chip.position = position;
 
   const toHolder = getChipHolder(chip);
@@ -40,6 +51,8 @@ function moveChip(chip, position) {
     ['margin-' + offsetProp] : `calc(0.4 * ${toHolder.chips.length - 1}  * var(--chip-size))`,
     'z-index': toHolder.chips.indexOf(chip),
   }
+
+  rules.moveingDone(game, chip);
 }
 
 const onChipClick = (chip) => {
@@ -47,11 +60,14 @@ const onChipClick = (chip) => {
     return;
   }
 
+  if(chip.color !== game.currentPlayer || game.step !== 'moving') {
+    return;
+  }
 
-  selectedChipId.value = chip.id;
+  if(rules.isChipSelectable(game, chip)) {
+    selectedChipId.value = chip.id;
+  }
 }
-
-function isWhiteTurn() { return selectedChipId.value.includes('white') }
 
 const onHolderClick = (holderNmb) => {
   if(!selectedChipId.value) { return }
@@ -63,20 +79,28 @@ const onHolderClick = (holderNmb) => {
 
   moveChip(chips.find(({id}) => id === selectedChipId.value), position);
 }
+
+function onDiceRolled(values) {
+  game.diceValues = values;
+  game.step = 'moving';
+}
 </script>
 
 <template>
   <div class="board">
-    <dices ref="dicesBlack" @click="() => dicesBlack.roll()" class="dices black" :state="'show'"/>
+    <dices :style="{position: 'absolute', [isWhiteTurn() ? 'right' : 'left']: '20px'}"
+           ref="dicesRef" @click="() => dicesRef.roll()"
+           @ready="onDiceRolled"
+           :state="diceState"/>
 
     <div class="board-inner">
-      <div v-for="(_, i) in Array.from({ length: 12 })"
+      <div v-for="(_, i) in 12"
            class="chip-holder"
            :style="{left: `calc(${i}  * 100vh / 12)`}"
            @click="() => onHolderClick(12 - i)"
       />
       <div style="position: relative; top: 100vh; transform: rotate(180deg);">
-        <div v-for="(_, i) in Array.from({ length: 12 })"
+        <div v-for="(_, i) in 12"
              class="chip-holder"
              @click="() => onHolderClick(24 - i)"
              :style="{left: `calc(${i}  * 100vh / 12)`}"/>
@@ -91,7 +115,6 @@ const onHolderClick = (holderNmb) => {
         </template>
     </div>
       <div class="board-middle"></div>
-    <div class="dices white"></div>
   </div>
 </template>
 <style src="./App.scss" lang="scss">

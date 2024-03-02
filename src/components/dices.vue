@@ -4,27 +4,25 @@ import { reactive, ref, watch, watchEffect } from 'vue';
 const props = defineProps({
   state: {
     type: String,
-    required: true
+    required: true,
+    default: 'wait'
   },
 });
 
-const diceSymbols = ['\u2680','\u2681','\u2685','\u2683','\u2684','\u2685'];
-
-const value1 = ref('?');
-const value2 = ref('?');
+const value1 = ref('5');
+const value2 = ref('1');
+const state = ref(props.state);
 
 const animate = ref(false);
 
 const emit = defineEmits(['ready', 'rolling'])
 
+
 const generate = (count) => {
-  const d1 = Math.floor(Math.random() * 6 + 1) ;
-  let d2 = Math.floor(Math.random() * 6 + 1);
+  value1.value = Math.floor(Math.random() * 6 + 1) ;
+  value2.value = Math.floor(Math.random() * 6 + 1);
 
-  value1.value = diceSymbols[d1-1];
-  value2.value = diceSymbols[d2-1];
 
-  console.log('---------->', d1, d2);
   // return [value1.value, value2.value];
   if (count === 0) {
     animate.value = false;
@@ -36,7 +34,8 @@ const generate = (count) => {
 
 const roll = () => {
   animate.value = true;
-  emit('rolling', [value1.value, value2.value]);
+  state.value = 'show';
+  emit('rolling');
   generate(6);
 }
 
@@ -47,9 +46,17 @@ defineExpose({
 </script>
 
 <template>
-  <div class="dices" :class="{animate: animate}">
-    <div>{{value1}}</div><div>{{value2}}</div>
+  <div class="dice-container">
+    <div v-if="state !== 'wait'" class="dices" :class="{animate: animate}">
+      <img :src="`dice-${value1}.svg`">
+      <img :src="`dice-${value2}.svg`">
+    </div>
+
+    <div v-if="state === 'wait'" class="dices">
+      <img :src="'roll-dice.svg'">
+    </div>
   </div>
+
 
 </template>
 
@@ -57,17 +64,24 @@ defineExpose({
 :root {
 
 }
+.dice-container {
+  margin: 20px;
+  min-width: calc( 32px);
+}
 
 .dices {
+  cursor: pointer;
   display: flex;
   flex-flow: column;
-  line-height: 50px;
-  font-size: 60px;
-  margin: 20px;
+
+  img {
+    margin: 5px 0;
+    max-height: 32px;
+  }
 }
 
 .animate {
-  div {
+  & > * {
     animation: rotate 1s linear infinite;
   }
 }

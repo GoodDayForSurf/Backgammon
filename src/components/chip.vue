@@ -25,13 +25,11 @@ watchEffect(
 
 function recalcPosition(index) {
   let side = ['top', 'bottom'];
-  console.log('----CHIP-position----->', index);
 
   if (props.color === 'black') {
     index = index < 13 ? index + 12 : index - 12;
     // side = ['bottom', 'top'];
   }
-  console.log('----CHIP-position mapped----->', index);
 
   ['top', 'bottom', 'left', 'right'].forEach(prop => positionStyle[prop] = 'unset');
 
