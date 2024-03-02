@@ -1,4 +1,4 @@
-# dixit-score
+# Backgammon for two players on one device
 
 This template should help get you started developing with Vue 3 in Vite.
 
