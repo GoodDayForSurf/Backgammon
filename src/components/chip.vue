@@ -24,20 +24,25 @@ watchEffect(
 )
 
 function recalcPosition(index) {
-  let side = ['top', 'bottom'];
-
-  if (props.color === 'black') {
-    index = index < 13 ? index + 12 : index - 12;
-    // side = ['bottom', 'top'];
-  }
+  const isWhite = props.color === 'white';
 
   ['top', 'bottom', 'left', 'right'].forEach(prop => positionStyle[prop] = 'unset');
 
+  if(index < 0) {
+    positionStyle[ isWhite ? 'bottom' : 'top'] = `0`;
+    positionStyle[ isWhite ? 'right' : 'left'] = `calc(${isWhite ? -1 : -1} * var(--chip-size))`;
+    return;
+  }
+
+  if (!isWhite) {
+    index = index < 13 ? index + 12 : index - 12;
+  }
+
   if(index <= 12) {
-    positionStyle[side[0]] = `0`;
+    positionStyle.top = `0`;
     positionStyle.right = `calc(${index - 1} * var(--chip-size))`
   } else {
-    positionStyle[side[1]] = `0`;
+    positionStyle.bottom = `0`;
     positionStyle.left = `calc(${index - 13} * var(--chip-size))`
   }
 }

@@ -24,6 +24,32 @@ body {
   flex-flow: row;
   padding: 0 80px;
   max-width: calc(100vh + 160px);
+
+  .chip-out {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    font-size: 23px;
+    font-weight: 700;
+
+    &:not(.white) {
+      color: white;
+      top: 0;
+      left: 20px;
+    }
+
+    &.white {
+      color: black;
+      bottom: 0;
+      right: 20px;
+      box-shadow: 0 0 2px black;
+    }
+
+  }
+
+
 }
 
 .board-inner {
@@ -60,6 +86,35 @@ body {
   &.white {
     border-color: snow;
     background-color: silver;
+  }
+}
+
+.skip-btn {
+  z-index: 1;
+  font-size: 32px;
+  background-color: white;
+  padding: 0 20px;
+  border-radius: 30px;
+  cursor: pointer;
+
+  &:active {
+    background-color: greenyellow;
+  }
+}
+
+.out-btn {
+  z-index: 1;
+  font-size: 32px;
+  padding: 0 20px;
+  border-radius: 30px;
+  cursor: pointer;
+
+  img {
+    width: 50px;
+  }
+
+  &:active {
+    background-color: greenyellow;
   }
 }
 
