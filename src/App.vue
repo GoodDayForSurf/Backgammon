@@ -89,16 +89,8 @@ function moveChip(chip, position) {
 
 function getAllowedHolders(chip) {
   const variants = rules.getNextPositionVariants(game, chip).sort();
-
-  let hasDeny = false;
-  const holders = variants
-      .map(position => getChipHolder(chip.color, position))
-      .filter(holder => {
-        hasDeny = hasDeny || !rules.isHolderAllowed(holder, chip);
-        return !hasDeny;
-      });
-
-  return holders;
+  const variantsHolders = variants.map(position => getChipHolder(chip.color, position));
+  return rules.getAllowedHolders(chip, variantsHolders);
 }
 
 const onHolderClick = (holderNmb) => {

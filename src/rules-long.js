@@ -38,6 +38,15 @@ const longs = {
         return (holder.chips.length === 0 || holder.chips.at(-1)?.color === chip.color)
     },
 
+    getAllowedHolders(chip, variantsHolders) {
+        let hasDeny = false;
+
+        return variantsHolders.filter(holder => {
+                hasDeny = hasDeny || !longs.isHolderAllowed(holder, chip);
+                return !hasDeny;
+            });
+    },
+
     isAllChipsInHome(game, color) {
         return !game.chips.find(
             c=> c.color === color && c.position < 19)
