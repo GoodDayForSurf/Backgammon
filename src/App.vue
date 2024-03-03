@@ -42,6 +42,13 @@ function getChipHolder(color, position) {
   return position ? holders[position - 1] : null;
 }
 
+function getChipMarker(chip) {
+  const holder = getChipHolder(chip.color, chip.position);
+  const length = holder.chips.length;
+
+  return holder.chips.at(-1) === chip && length > 1 ? length : '';
+}
+
 const onChipClick = (chip) => {
   if(getChipHolder(chip.color, chip.position).chips.at(-1).id !== chip.id) {
     return;
@@ -80,7 +87,7 @@ function moveChip(chip, position) {
   const offsetProp = ((chip.color === 'white' && chip.position < 13) || (chip.color === 'black' && chip.position > 12) ? 'top': 'bottom')
 
   chip.offsetStyle = {
-    ['margin-' + offsetProp] : `calc(0.35 * ${toHolder.chips.length - 1}  * var(--chip-size))`,
+    // ['margin-' + offsetProp] : `calc(0.2 * ${toHolder.chips.length - 1}  * var(--chip-size))`,
     'z-index': toHolder.chips.indexOf(chip),
   }
 
@@ -90,6 +97,7 @@ function moveChip(chip, position) {
 function getAllowedHolders(chip) {
   const variants = rules.getNextPositionVariants(game, chip).sort();
   const variantsHolders = variants.map(position => getChipHolder(chip.color, position));
+
   return rules.getAllowedHolders(chip, variantsHolders);
 }
 
@@ -187,7 +195,7 @@ function showOutBtn() {
 function onOutClick() {
   const selectedChip = getSelectedChip();
   const variants = rules.getNextPositionVariants(game, selectedChip, false).filter(v => v > 24).sort();
-  console.log('-----onOutClick()----->', variants);
+
   moveChip(selectedChip, variants[0]);
   updateDicesAfterChipMove(selectedChip);
   switchToNextTurn();
@@ -227,7 +235,7 @@ function onOutClick() {
       <div v-for="(_, i) in 12"
            class="chip-holder"
            :class="{highlighted: highlightedHolders.includes(12 - i)}"
-           :style="{left: `calc(${i}  * 100vh / 12)`}"
+           :style="{left: `calc(${i}  * var(--chip-size))`}"
            @click="() => onHolderClick(12 - i)"
       />
       <div style="position: relative; top: 100vh; transform: rotate(180deg);">
@@ -235,7 +243,7 @@ function onOutClick() {
              class="chip-holder"
              :class="{highlighted: highlightedHolders.includes(24 - i)}"
              @click="() => onHolderClick(24 - i)"
-             :style="{left: `calc(${i}  * 100vh / 12)`}"/>
+             :style="{left: `calc(${i}  * var(--chip-size))`}"/>
       </div>
       <template v-for="(chip, i) in chips">
         <chipComponent v-if="chip.position < 25"
@@ -243,6 +251,7 @@ function onOutClick() {
               :class="{'selected': selectedChipId === chip.id}"
               :position="chip.position"
               :style="chip.offsetStyle"
+              :marker="getChipMarker(chip)"
               @click="() => onChipClick(chip)"
         />
         </template>

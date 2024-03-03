@@ -10,6 +10,11 @@ const props = defineProps({
     type: Number,
     required: true
   },
+  marker: {
+    type: String,
+    required: false,
+    default: ''
+  },
 });
 
 const positionStyle = reactive({
@@ -53,7 +58,7 @@ function recalcPosition(index) {
        :class="{[props.color]: true}"
        :style="positionStyle"
 
-  ></div>
+  >{{props.marker}}</div>
 </template>
 
 <style scoped lang="scss">

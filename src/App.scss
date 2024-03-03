@@ -1,6 +1,9 @@
 :root {
-  --chip-size: calc(100vh / 12);
-  --player-button-size: 54px;
+  --size: calc(100vw / 14);
+  --borad-padding: var(--size);
+  --board-width: calc(var(--size) * 12);
+  --chip-size: calc(var(--board-width) / 12);
+
 }
 
 #app {
@@ -22,41 +25,15 @@ body {
   justify-content: center;
   user-select: none;
   flex-flow: row;
-  padding: 0 80px;
-  max-width: calc(100vh + 160px);
-
-  .chip-out {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2;
-    font-size: 23px;
-    font-weight: 700;
-
-    &:not(.white) {
-      color: white;
-      top: 0;
-      left: 20px;
-    }
-
-    &.white {
-      color: black;
-      bottom: 0;
-      right: 20px;
-      box-shadow: 0 0 2px black;
-    }
-
-  }
-
-
+  padding: 0 var(--borad-padding);
+  max-width: calc(var(--board-width) + var(--borad-padding) * 2);
 }
 
 .board-inner {
   position: relative;
   height: 100vh;
-  width: 100vh;
-  max-width: 100vh;
+  width: var(--board-width);
+  max-width: var(--board-width);
   background-color: #fcef6b;
 }
 
@@ -82,6 +59,29 @@ body {
   border-color: #333333;
   border-style: solid;
   border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  font-size: 23px;
+  font-weight: 700;
+
+  &:not(.white) {
+    color: white;
+    top: 0;
+    left: 20px;
+  }
+
+  &.white {
+    color: black;
+    bottom: 0;
+    right: 20px;
+
+    &.chip-out {
+      box-shadow: 0 0 2px black;
+    }
+  }
 
   &.white {
     border-color: snow;
