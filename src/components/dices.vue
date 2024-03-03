@@ -1,32 +1,35 @@
 <script setup>
-import { reactive, ref, watch, watchEffect } from 'vue';
+import { computed, reactive, ref, watch, watchEffect } from 'vue';
 
 const props = defineProps({
-  state: {
+  allowDouble: true,
+  values: {
+    type: Array,
+    default: [1, 1]
+  },
+  gameState: {
     type: String,
     required: true,
-    default: 'wait'
+    default: 'waiting-roll'
   },
 });
 
-const value1 = ref('5');
-const value2 = ref('1');
-const state = ref(props.state);
-
+let [value1, value2] = [ref(1), ref(1)];
+const state = ref('');
 const animate = ref(false);
 
 const emit = defineEmits(['ready', 'rolling'])
 
-
 const generate = (count) => {
-  value1.value = Math.floor(Math.random() * 6 + 1) ;
-  value2.value = Math.floor(Math.random() * 6 + 1);
+  [value2.value, value1.value] = [
+    2,// Math.floor(Math.random() * 6 + 1),
+    2// Math.floor(Math.random() * 6 + 1)
+  ].sort();
 
-
-  // return [value1.value, value2.value];
   if (count === 0) {
     animate.value = false;
     emit('ready', [value1.value, value2.value]);
+    state.value = 'show';
   } else {
     setTimeout(() => generate(--count), Math.random() * 100 + 100);
   }
@@ -34,7 +37,7 @@ const generate = (count) => {
 
 const roll = () => {
   animate.value = true;
-  state.value = 'show';
+  state.value = 'rolling';
   emit('rolling');
   generate(6);
 }
@@ -47,14 +50,23 @@ defineExpose({
 
 <template>
   <div class="dice-container">
-    <div v-if="state !== 'wait'" class="dices" :class="{animate: animate}">
-      <img :src="`dice-${value1}.svg`">
-      <img :src="`dice-${value2}.svg`">
+    <div class="dices">
+      <img v-if="gameState === 'waiting-roll'" :src="'roll-dice.svg'">
     </div>
+    <template v-if="gameState === 'moving'">
+      <div v-if="state === 'rolling'" class="dices" :class="{animate: animate}">
+        <img v-for="value in [value1, value2]" :src="`dice-${value}.svg`">
+      </div>
 
-    <div v-if="state === 'wait'" class="dices">
-      <img :src="'roll-dice.svg'">
-    </div>
+      <div v-if="state === 'show'" class="dices">
+        <img v-for="dice in values"
+             :src="`dice-${dice.value}.svg`"
+             :class="{disabled: dice.disabled}">
+      </div>
+    </template>
+
+
+
   </div>
 
 
@@ -65,8 +77,7 @@ defineExpose({
 
 }
 .dice-container {
-  margin: 20px;
-  min-width: calc( 32px);
+  min-width: 80px;
 }
 
 .dices {
@@ -76,7 +87,11 @@ defineExpose({
 
   img {
     margin: 5px 0;
-    max-height: 32px;
+    max-height: 48px;
+
+    &.disabled {
+      opacity: 0.25;
+    }
   }
 }
 
