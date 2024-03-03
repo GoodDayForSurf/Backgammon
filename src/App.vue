@@ -46,7 +46,7 @@ function getChipMarker(chip) {
   const holder = getChipHolder(chip.color, chip.position);
   const length = holder.chips.length;
 
-  return holder.chips.at(-1) === chip && length > 1 ? length : '';
+  return holder.chips.at(-1) === chip && length > 1 ? `${length}` : '';
 }
 
 const onChipClick = (chip) => {
@@ -66,33 +66,8 @@ const onChipClick = (chip) => {
 function selectChip(chip) {
   selectedChipId.value = chip.id;
   highlightedHolders.value = getAllowedHolders(chip).map((h) => h.nmb);
-  console.log('-----holders----->', highlightedHolders);
 }
 
-function moveChip(chip, position) {
-  const fromHolder = getChipHolder(chip.color, chip.position);
-
-  fromHolder?.chips.pop();
-  chip.prevPosition = chip.position;
-  chip.position = position;
-
-  if( position > 24) {
-    return;
-  }
-
-  const toHolder = getChipHolder(chip.color, chip.position);
-
-  toHolder.chips.push(chip);
-
-  const offsetProp = ((chip.color === 'white' && chip.position < 13) || (chip.color === 'black' && chip.position > 12) ? 'top': 'bottom')
-
-  chip.offsetStyle = {
-    // ['margin-' + offsetProp] : `calc(0.2 * ${toHolder.chips.length - 1}  * var(--chip-size))`,
-    'z-index': toHolder.chips.indexOf(chip),
-  }
-
-  chip.prevPosition && rules.movingDone(game, chip);
-}
 
 function getAllowedHolders(chip) {
   const variants = rules.getNextPositionVariants(game, chip).sort();
@@ -116,6 +91,26 @@ const onHolderClick = (holderNmb) => {
   switchToNextTurn();
 }
 
+function moveChip(chip, position) {
+  const fromHolder = getChipHolder(chip.color, chip.position);
+
+  fromHolder?.chips.pop();
+  chip.prevPosition = chip.position;
+  chip.position = position;
+
+  if( position > 24) {
+    return;
+  }
+
+  const toHolder = getChipHolder(chip.color, chip.position);
+
+  toHolder.chips.push(chip);
+
+  chip.offsetStyle = {'z-index': toHolder.chips.indexOf(chip)}
+
+  chip.prevPosition && rules.movingDone(game, chip);
+}
+
 function updateDicesAfterChipMove(chip) {
   const diff = chip.position - chip.prevPosition;
   const [d1, d2] = game.diceValues.map(d => d.value);
@@ -134,7 +129,6 @@ function updateDicesAfterChipMove(chip) {
       }
     });
   }
-  console.log('---updateDicesAfterChipMove-game.diceValues------>', diff, game.diceValues);
 }
 
 function switchToNextTurn() {
@@ -152,7 +146,6 @@ function switchPlayer() {
   game.currentPlayer = game.currentPlayer === 'black' ? 'white' : 'black';
   game.headIsUsed = false;
   game.step = 'waiting-roll';
-  // game.diceValues = [];
 }
 
 function clearSelection() {
@@ -174,7 +167,6 @@ function onDicesClick() {
 }
 
 function showSkip() {
-  console.log('-----showSkip----->', getChipById(selectedChipId.value))
   return game.step === 'moving'
       && game.diceValues?.length > 0
       && selectedChipId.value

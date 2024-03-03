@@ -75,15 +75,18 @@ defineExpose({
 }
 .dice-container {
   min-width: var(--size);
+  max-width: var(--size);
+  overflow: hidden;
 }
 
 .dices {
   cursor: pointer;
   display: flex;
+  gap: 14px;
+  padding: 14px 0;
   flex-flow: column;
 
   img {
-    margin: 5px 0;
     max-height: 48px;
 
     &.disabled {
