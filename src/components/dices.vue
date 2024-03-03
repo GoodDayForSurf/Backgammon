@@ -22,8 +22,8 @@ const emit = defineEmits(['ready', 'rolling'])
 
 const generate = (count) => {
   [value2.value, value1.value] = [
-    2,// Math.floor(Math.random() * 6 + 1),
-    2// Math.floor(Math.random() * 6 + 1)
+    Math.floor(Math.random() * 6 + 1),
+    Math.floor(Math.random() * 6 + 1)
   ].sort();
 
   if (count === 0) {
