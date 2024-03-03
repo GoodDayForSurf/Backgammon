@@ -100,7 +100,7 @@ function getAllowedHolders(chip) {
 }
 
 const onHolderClick = (holderNmb) => {
-  if(!selectedChipId.value) { return }
+  if(!selectedChipId.value || !highlightedHolders.value.includes(holderNmb)) { return }
 
   const position = isWhiteTurn()
       ? holderNmb
