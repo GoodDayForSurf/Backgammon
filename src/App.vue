@@ -34,10 +34,6 @@ function isWhiteTurn() { return game.currentPlayer === 'white' }
 function getChipById(chipId) { return chips.find(c => c.id === chipId)}
 function getSelectedChip() { return getChipById(selectedChipId.value)}
 
-function getEnabledDices() {
-  return game.diceValues?.filter(d => !d.disabled) || [];
-}
-
 function getChipHolder(color, position) {
   if (position && color === 'black') {
     position = position < 13 ? position + 12 : position - 12;
@@ -92,11 +88,17 @@ function moveChip(chip, position) {
 }
 
 function getAllowedHolders(chip) {
- const variants = rules.getNextPositionVariants(game, chip);
-  console.log('-----variants----->', variants);
- return variants.map(position => getChipHolder(chip.color, position)).filter(holder => {
-   return rules.isHolderAllowed(holder, chip);
- })
+  const variants = rules.getNextPositionVariants(game, chip).sort();
+
+  let hasDeny = false;
+  const holders = variants
+      .map(position => getChipHolder(chip.color, position))
+      .filter(holder => {
+        hasDeny = hasDeny || !rules.isHolderAllowed(holder, chip);
+        return !hasDeny;
+      });
+
+  return holders;
 }
 
 const onHolderClick = (holderNmb) => {

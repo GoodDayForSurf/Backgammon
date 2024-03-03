@@ -22,12 +22,15 @@ const longs = {
         console.log('-----game.diceValues----->', game);
         const dValues = game.diceValues;
         const [d1, d2] = dValues.map(d => d.disabled? 0 : d.value);
+        let variants = [];
 
-        return (
-            (dValues.length === 2 )
-            ? [...new Set([d1, d2, d1 + d2])]
-            : dValues.filter(d => !d.disabled).map((d, i) => d.value * (i + 1))
-        ).filter(d => !!d)
+        if (dValues.length === 2 ) {
+            variants = [...new Set([d1, d2, d1 + d2])];
+        } else {
+            variants = dValues.filter(d => !d.disabled).map((d, i) => d.value * (i + 1))
+        }
+
+        return variants.filter(d => !!d)
             .map(v => v + chip.position).filter(v => !removeOut || v < 24);
     },
 
@@ -41,7 +44,7 @@ const longs = {
     },
 
     isChipOutable(game, chip) {
-        return /*longs.isAllChipsInHome(game, chip.color) &&*/ longs.getNextPositionVariants(game, chip, false).find(v => v > 24)
+        return longs.isAllChipsInHome(game, chip.color) && longs.getNextPositionVariants(game, chip, false).find(v => v > 24)
     }
 }
 
