@@ -50,8 +50,8 @@ defineExpose({
 
 <template>
   <div class="dice-container">
-    <div class="dices">
-      <img v-if="gameState === 'waiting-roll'" :src="'roll-dice.svg'">
+    <div class="dices" v-if="gameState === 'waiting-roll'">
+      <img :src="'roll-dice.svg'">
     </div>
     <template v-if="gameState === 'moving'">
       <div v-if="state === 'rolling'" class="dices" :class="{animate: animate}">
@@ -65,8 +65,6 @@ defineExpose({
       </div>
     </template>
   </div>
-
-
 </template>
 
 <style scoped lang="scss">

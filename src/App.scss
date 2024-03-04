@@ -62,8 +62,8 @@ body {
 .chip {
   position: absolute;
   background-color: black;
-  width: calc(var(--chip-size) - 2px);
-  height: calc(var(--chip-size) - 2px);
+  width: calc(var(--chip-size) - 4px);
+  height: calc(var(--chip-size) - 4px);
   border-width: calc(0.2 * var(--chip-size));
   border-color: #333333;
   border-style: solid;

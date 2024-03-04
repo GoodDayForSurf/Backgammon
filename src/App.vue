@@ -16,14 +16,14 @@ const chips = ['black', 'white'].flatMap(
 
 chips.forEach(chip => moveChip(chip,1));
 
-const selectedChipId = ref(null);
-
 let highlightedHolders = ref([]);
 const dicesRef = ref(null);
 const clickSoundRef = ref(null);
 const dicesSoundRef = ref(null);
 const game = reactive({
   chips,
+  holders,
+  selectedChip: null,
   step: 'waiting-roll',
   currentPlayer: Math.random() > 0.5 ? 'black' : 'white',
 });
@@ -32,9 +32,6 @@ const whiteChipsOut = computed(() => game.chips.filter(ch => ch.color == 'white'
 const blackChipsOut = computed(() => game.chips.filter(ch => ch.color == 'black' && ch.position > 24).length);;
 
 function isWhiteTurn() { return game.currentPlayer === 'white' }
-
-function getChipById(chipId) { return chips.find(c => c.id === chipId)}
-function getSelectedChip() { return getChipById(selectedChipId.value)}
 
 function getChipHolder(color, position) {
   if (position && color === 'black') {
@@ -66,19 +63,12 @@ const onChipClick = (chip) => {
 }
 
 function selectChip(chip) {
-  selectedChipId.value = chip.id;
-  highlightedHolders.value = getAllowedHolders(chip).map((h) => h.nmb);
-}
-
-
-function getAllowedHolders(chip) {
-  const variants = rules.getNextPositionVariants(game, chip);
-  const variantsHolders = variants.map(position => getChipHolder(chip.color, position));
-  return rules.getAllowedHolders(game, chip, variantsHolders);
+  game.selectedChip = chip;
+  highlightedHolders.value = rules.getAllowedHolders(game, chip).map((h) => h.nmb);
 }
 
 const onHolderClick = (holderNmb) => {
-  if(!selectedChipId.value || !highlightedHolders.value.includes(holderNmb)) { return }
+  if(!game.selectedChip || !highlightedHolders.value.includes(holderNmb)) { return }
 
   clickSoundRef.value.play();
 
@@ -87,7 +77,7 @@ const onHolderClick = (holderNmb) => {
       : holderNmb > 12
           ? holderNmb - 12 : holderNmb + 12;
 
-  const selectedChip = getSelectedChip();
+  const selectedChip = game.selectedChip;
 
   moveChip(selectedChip, position);
   updateDicesAfterChipMove(selectedChip);
@@ -152,7 +142,7 @@ function switchPlayer() {
 }
 
 function clearSelection() {
-  selectedChipId.value = null;
+  game.selectedChip = null;
   highlightedHolders.value = [];
 }
 
@@ -165,16 +155,13 @@ function onDicesClick() {
   if( game.step === 'waiting-roll') {
     game.step = 'moving';
     dicesSoundRef.value.play();
+    game.diceValues = [];
     dicesRef.value.roll();
   }
 }
 
 function showSkip() {
-  return game.step === 'moving'
-      && game.diceValues?.length > 0
-      && selectedChipId.value
-      && getAllowedHolders(getChipById(selectedChipId.value)).length === 0
-      && !rules.isChipOutable(game, getChipById(selectedChipId.value));
+  return rules.isSkipAllowed(game);
 }
 
 function onSkipClick() {
@@ -182,16 +169,15 @@ function onSkipClick() {
 }
 
 function showOutBtn() {
-  const selectedChip = getChipById(selectedChipId.value);
+  const selectedChip = game.selectedChip;
 
   return selectedChip && rules.isChipOutable(game, selectedChip);
 }
 
 function onOutClick() {
-  const selectedChip = getSelectedChip();
-  const variants = rules.getNextPositionVariants(game, selectedChip, false).filter(v => v > 24).sort();
+  const variants = rules.getNextPositionVariants(game, game.selectedChip, false).filter(v => v > 24).sort();
 
-  moveChip(selectedChip, variants[0]);
+  moveChip(game.selectedChip, variants[0]);
   updateDicesAfterChipMove(selectedChip);
   switchToNextTurn();
 }
@@ -199,7 +185,7 @@ function onOutClick() {
 
 <template>
   <audio ref="clickSoundRef" src="wood-block.mp3"></audio>
-  <audio ref="dicesSoundRef" src="dices.mp3"></audio>
+  <audio ref="dicesSoundRef" src="dices.mp3" volume="0.3"></audio>
   <div class="board">
     <dices ref="dicesRef"
            :style="{
@@ -249,7 +235,7 @@ function onOutClick() {
       <template v-for="(chip, i) in chips">
         <chipComponent v-if="chip.position < 25"
             :color="chip.color"
-              :class="{'selected': selectedChipId === chip.id}"
+              :class="{'selected': game.selectedChip?.id === chip.id}"
               :position="chip.position"
               :style="chip.offsetStyle"
               :marker="getChipMarker(chip)"
