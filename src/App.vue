@@ -70,10 +70,9 @@ function selectChip(chip) {
 
 
 function getAllowedHolders(chip) {
-  const variants = rules.getNextPositionVariants(game, chip).sort();
+  const variants = rules.getNextPositionVariants(game, chip);
   const variantsHolders = variants.map(position => getChipHolder(chip.color, position));
-
-  return rules.getAllowedHolders(chip, variantsHolders);
+  return rules.getAllowedHolders(game, chip, variantsHolders);
 }
 
 const onHolderClick = (holderNmb) => {
@@ -197,7 +196,11 @@ function onOutClick() {
 <template>
   <div class="board">
     <dices ref="dicesRef"
-           :style="{position: 'absolute', [isWhiteTurn() ? 'right' : 'left']: '0'}"
+           :style="{
+                position: 'absolute',
+                [isWhiteTurn() ? 'right' : 'left']: '0',
+                transform: [isWhiteTurn() ? 'none' : 'rotate(180deg)']
+            }"
            @click="() => onDicesClick()"
            @ready="onDiceRolled"
            :values="game.diceValues"

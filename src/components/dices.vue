@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive, ref, watch, watchEffect } from 'vue';
+import { ref } from 'vue';
 
 const props = defineProps({
   allowDouble: true,
