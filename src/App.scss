@@ -46,7 +46,16 @@ body {
   border-top: calc(100vh / 2.5) solid #eda56b;
 
   &.highlighted {
+    cursor: pointer;
     border-top-color: rgba(144, 238, 144, 0.88);
+
+    &:hover {
+      border-top-color: rgb(90, 195, 74);
+    }
+
+    &:active {
+      border-top-color: rgb(61, 239, 34);
+    }
   }
 }
 

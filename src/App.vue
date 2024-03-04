@@ -20,6 +20,8 @@ const selectedChipId = ref(null);
 
 let highlightedHolders = ref([]);
 const dicesRef = ref(null);
+const clickSoundRef = ref(null);
+const dicesSoundRef = ref(null);
 const game = reactive({
   chips,
   step: 'waiting-roll',
@@ -77,6 +79,8 @@ function getAllowedHolders(chip) {
 
 const onHolderClick = (holderNmb) => {
   if(!selectedChipId.value || !highlightedHolders.value.includes(holderNmb)) { return }
+
+  clickSoundRef.value.play();
 
   const position = isWhiteTurn()
       ? holderNmb
@@ -154,13 +158,13 @@ function clearSelection() {
 
 function onDiceRolled(values) {
   game.diceValues = rules.getDiceValues(values).map(d => ({value: d, disabled: false}));
-  console.log('-----onDiceRolled----->', values, game.diceValues);
   game.step = 'moving';
 }
 
 function onDicesClick() {
   if( game.step === 'waiting-roll') {
     game.step = 'moving';
+    dicesSoundRef.value.play();
     dicesRef.value.roll();
   }
 }
@@ -194,6 +198,8 @@ function onOutClick() {
 </script>
 
 <template>
+  <audio ref="clickSoundRef" src="wood-block.mp3"></audio>
+  <audio ref="dicesSoundRef" src="dices.mp3"></audio>
   <div class="board">
     <dices ref="dicesRef"
            :style="{
