@@ -62,7 +62,37 @@ function recalcPosition(index) {
 </template>
 
 <style scoped lang="scss">
-:root {
+.win-container {
+  content:  '★';
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20vh;
+  width: var(--board-width);
+  max-width: var(--board-width);
+  z-index: 1;
+
+  .white,
+  .black {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: transparent no-repeat center;
+    background-image: url("../../public/star.svg");
+    background-size: contain;
+    height: 20vh;
+
+    &.animate {
+      animation: rotate 3s linear 1;
+    }
+  }
+
+  .white {
+    filter: invert(0.9);
+  }
 
 }
 

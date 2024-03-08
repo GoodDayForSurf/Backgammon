@@ -3,6 +3,7 @@ import { computed, reactive, ref } from 'vue';
 import { longs } from './rules-long.js'
 import chipComponent  from '@/components/chip.vue'
 import dices from '@/components/dices.vue';
+import Ornament from '@/components/ornament.vue';
 
 const rules = longs;
 const holders = reactive(Array.from({ length: 24 }, (_,i) => ({chips: [], nmb: i + 1})));
@@ -228,10 +229,7 @@ function checkWin() {
                   }"
          @click="onOutClick"
     ><img :src="'arrow-right-circle.svg'"></div>
-    <div class="win-container">
-      <div class="black"></div>
-      <div class="white"></div>
-    </div>
+    <ornament/>
     <div class="board-inner">
       <div v-for="(_, i) in 12"
            class="chip-holder"
@@ -272,37 +270,5 @@ function checkWin() {
   box-shadow: 0 0 20px #5ac34a;
 }
 
-.win-container {
-  content:  '★';
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 20vh;
-  width: var(--board-width);
-  max-width: var(--board-width);
-  z-index: 1;
 
-  .white,
-  .black {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: transparent no-repeat center;
-    background-image: url("../public/star.svg");
-    background-size: contain;
-    height: 20vh;
-
-    &.animate {
-      animation: rotate 3s linear 1;
-    }
-  }
-
-  .white {
-    filter: invert(0.9);
-  }
-
-}
 </style>
