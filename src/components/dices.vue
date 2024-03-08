@@ -51,17 +51,18 @@ defineExpose({
 <template>
   <div class="dice-container">
     <div class="dices" v-if="gameState === 'waiting-roll'">
-      <img :src="'roll-dice.svg'">
+      <div class="dice-img roll-dice"></div>
     </div>
     <template v-if="gameState === 'moving'">
       <div v-if="state === 'rolling'" class="dices" :class="{animate: animate}">
-        <img v-for="value in [value1, value2]" :src="`dice-${value}.svg`">
+        <div v-for="value in [value1, value2]"
+             :class="{'dice-img': true, ['dice-' + value]: true}"></div>
       </div>
 
       <div v-if="state === 'show'" class="dices">
-        <img v-for="dice in values"
-             :src="`dice-${dice.value}.svg`"
-             :class="{disabled: dice.disabled}">
+        <div v-for="dice in values"
+             class="dice-img"
+             :class="{disabled: dice.disabled, ['dice-'+dice.value]: true}"></div>
       </div>
     </template>
   </div>
@@ -83,13 +84,23 @@ defineExpose({
   gap: 14px;
   padding: 14px 0;
   flex-flow: column;
+  align-items: center;
 
-  img {
-    max-height: 48px;
+  .dice-img {
+    width: 48px;
+    height: 48px;
+    background-size: contain;
 
     &.disabled {
       opacity: 0.25;
     }
+  }
+
+  .roll-dice {
+    width: 50px;
+    height: 50px;
+    background: no-repeat url("../../public/roll-dice.svg");
+    background-size: contain;
   }
 }
 
@@ -99,12 +110,26 @@ defineExpose({
   }
 }
 
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
+.dice- {
+  &1 {
+    background: no-repeat url("../../public/dice-1.svg");
   }
-  to {
-    transform: rotate(360deg);
+  &2 {
+    background: no-repeat url("../../public/dice-2.svg");
+  }
+  &3 {
+    background: no-repeat url("../../public/dice-3.svg");
+  }
+  &4 {
+    background: no-repeat url("../../public/dice-4.svg");
+  }
+  &5 {
+    background: no-repeat url("../../public/dice-5.svg");
+  }
+  &6 {
+    background: no-repeat url("../../public/dice-6.svg");
   }
 }
+
+
 </style>

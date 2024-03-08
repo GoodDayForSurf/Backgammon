@@ -20,6 +20,7 @@ let highlightedHolders = ref([]);
 const dicesRef = ref(null);
 const clickSoundRef = ref(null);
 const dicesSoundRef = ref(null);
+const soundRef = ref(null);
 const game = reactive({
   chips,
   holders,
@@ -179,13 +180,23 @@ function onOutClick() {
 
   moveChip(game.selectedChip, variants[0]);
   updateDicesAfterChipMove(selectedChip);
+  checkWin();
   switchToNextTurn();
+}
+
+function checkWin() {
+  const isAllChipsDone = !game.chips.find((chip) => chip.position > 1 && game.currentPlayer === chip.color)
+  if(isAllChipsDone) {
+    soundRef.value.play();
+    document.querySelector(`.win-container .${game.currentPlayer}`)?.classList.add('animate')
+  }
 }
 </script>
 
 <template>
   <audio ref="clickSoundRef" src="wood-block.mp3"></audio>
   <audio ref="dicesSoundRef" src="dices.mp3" volume="0.3"></audio>
+  <audio ref="soundRef" src="win.mp3"></audio>
   <div class="board">
     <dices ref="dicesRef"
            :style="{
@@ -217,7 +228,10 @@ function onOutClick() {
                   }"
          @click="onOutClick"
     ><img :src="'arrow-right-circle.svg'"></div>
-
+    <div class="win-container">
+      <div class="black"></div>
+      <div class="white"></div>
+    </div>
     <div class="board-inner">
       <div v-for="(_, i) in 12"
            class="chip-holder"

@@ -4,6 +4,20 @@
   --board-width: calc(var(--size) * 12);
   --chip-size: calc(var(--board-width) / 12);
 
+  --board-color: #009688;
+  --holder-color: #70d7cb;
+  --holder-highlight: #90EE90E0;
+  --holder-hover: #5BC47CFF;
+  --holder-active: #e75a5a;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 #app {
@@ -28,36 +42,77 @@ body {
   padding: 0 var(--borad-padding);
   max-width: calc(var(--board-width) + var(--borad-padding) * 2);
 }
+.win-container {
+  content:  '★';
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20vh;
+  width: var(--board-width);
+  max-width: var(--board-width);
+  z-index: 1;
+
+  .white,
+  .black {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: url("../public/star3.svg") no-repeat center;
+    background-size: contain;
+    height: 20vh;
+
+    &.animate {
+      animation: rotate 3s linear 1;
+    }
+
+    &:before {
+      background: no-repeat url("../public/star3.svg");
+      background-size: contain;
+    }
+
+  }
+
+  .white {
+    filter: invert(0.9);
+  }
+
+}
 
 .board-inner {
   position: relative;
   height: 100vh;
   width: var(--board-width);
   max-width: var(--board-width);
-  background-color: #fcef6b;
+  background-color: var(--board-color);
 }
 
 .chip-holder {
   position: absolute;
   width: 0;
   height: 0;
+  z-index: 0;
   border-left: calc(var(--chip-size) / 2) solid transparent;
   border-right: calc(var(--chip-size) / 2) solid transparent;
-  border-top: calc(100vh / 2.5) solid #eda56b;
+  border-top: calc(100vh / 2.5) solid var(--holder-color);
 
   &.highlighted {
     cursor: pointer;
-    border-top-color: rgba(144, 238, 144, 0.88);
+    border-top-color: var(--holder-highlight);
 
     &:hover {
-      border-top-color: rgb(90, 195, 74);
+      border-top-color: var(--holder-hover);
     }
 
     &:active {
-      border-top-color: rgb(61, 239, 34);
+      border-top-color: var(--holder-active);
     }
   }
 }
+
+
 
 .chip {
   position: absolute;
