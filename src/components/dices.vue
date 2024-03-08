@@ -31,7 +31,7 @@ const generate = (count) => {
     emit('ready', [value1.value, value2.value]);
     state.value = 'show';
   } else {
-    setTimeout(() => generate(--count), Math.random() * 100 + 100);
+    setTimeout(() => generate(--count), Math.random() * 100 + 50);
   }
 }
 
@@ -95,7 +95,7 @@ defineExpose({
 
 .animate {
   & > * {
-    animation: rotate 1s linear infinite;
+    animation: rotate 0.7s linear infinite;
   }
 }
 

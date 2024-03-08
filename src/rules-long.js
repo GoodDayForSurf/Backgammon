@@ -38,7 +38,7 @@ const longs = {
         }
 
         return variants.filter(d => !!d)
-            .map(v => v*1 + chip.position*1).filter(v => !removeOut || v < 24);
+            .map(v => v*1 + chip.position*1).filter(v => !removeOut || v < 25);
     },
 
     isHolderAllowed(holder, chip) {
