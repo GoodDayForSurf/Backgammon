@@ -291,7 +291,7 @@ function checkWin() {
     justify-content: center;
 
     background: transparent no-repeat center;
-    background-image: url("../public/star.svg");
+    background-image: url("../public/ornament.svg");
     background-size: contain;
     height: 20vh;
 
