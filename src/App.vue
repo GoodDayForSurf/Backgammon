@@ -290,7 +290,8 @@ function checkWin() {
     align-items: center;
     justify-content: center;
 
-    background: url("../public/star.svg") no-repeat center;
+    background: transparent no-repeat center;
+    background-image: url("../public/star.svg");
     background-size: contain;
     height: 20vh;
 
