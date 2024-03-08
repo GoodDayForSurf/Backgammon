@@ -272,4 +272,36 @@ function checkWin() {
   box-shadow: 0 0 20px #5ac34a;
 }
 
+.win-container {
+  content:  '★';
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20vh;
+  width: var(--board-width);
+  max-width: var(--board-width);
+  z-index: 1;
+
+  .white,
+  .black {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: url("public/star3.svg") no-repeat center;
+    background-size: contain;
+    height: 20vh;
+
+    &.animate {
+      animation: rotate 3s linear 1;
+    }
+  }
+
+  .white {
+    filter: invert(0.9);
+  }
+
+}
 </style>
