@@ -41,6 +41,44 @@ body {
   flex-flow: row;
   padding: 0 var(--borad-padding);
   max-width: calc(var(--board-width) + var(--borad-padding) * 2);
+
+  .selected {
+    filter: drop-shadow(0 0 7px #3def22);
+    box-shadow: 0 0 20px #5ac34a;
+  }
+
+  .ornament-container {
+    content:  '★';
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 20vh;
+    width: var(--board-width);
+    max-width: var(--board-width);
+    z-index: 1;
+
+    .white,
+    .black {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 20vh;
+
+      svg {
+        width: 30vh;
+        height: 30vh;
+      }
+
+
+      &.animate {
+        animation: rotate 3s linear 1;
+      }
+    }
+    .white { filter: invert(0.9);
+    }
+  }
 }
 
 .board-inner {

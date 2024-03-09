@@ -209,7 +209,10 @@ function checkWin() {
            @ready="onDiceRolled"
            :values="game.diceValues"
            :gameState="game.step"/>
-
+    <div class="ornament-container">
+      <ornament class="black"></ornament>
+      <ornament class="white"></ornament>
+    </div>
     <div v-if="showSkip()"
          class="skip-btn"
          :style="{
@@ -229,7 +232,6 @@ function checkWin() {
                   }"
          @click="onOutClick"
     ><img :src="'arrow-right-circle.svg'"></div>
-    <ornament/>
     <div class="board-inner">
       <div v-for="(_, i) in 12"
            class="chip-holder"
@@ -264,11 +266,5 @@ function checkWin() {
 <style src="./App.scss" lang="scss">
 </style>
 <style lang="scss">
-
-.selected {
-  filter: drop-shadow(0 0 7px #3def22);
-  box-shadow: 0 0 20px #5ac34a;
-}
-
 
 </style>
