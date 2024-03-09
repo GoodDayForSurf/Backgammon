@@ -14,14 +14,6 @@ const chips = ['black', 'white'].flatMap(
           id: color + '_' + i,
         }))
     ));
-
-chips.forEach(chip => moveChip(chip,1));
-
-let highlightedHolders = ref([]);
-const dicesRef = ref(null);
-const clickSoundRef = ref(null);
-const dicesSoundRef = ref(null);
-const soundRef = ref(null);
 const game = reactive({
   chips,
   holders,
@@ -29,6 +21,17 @@ const game = reactive({
   step: 'waiting-roll',
   currentPlayer: Math.random() > 0.5 ? 'black' : 'white',
 });
+
+/*function getPos(i) {
+  return [15, 17][i];
+}
+chips.forEach((chip, i) => moveChip(chip,getPos(i) || 1));*/
+
+let highlightedHolders = ref([]);
+const dicesRef = ref(null);
+const clickSoundRef = ref(null);
+const dicesSoundRef = ref(null);
+const soundRef = ref(null);
 
 const whiteChipsOut = computed(() => game.chips.filter(ch => ch.color == 'white' && ch.position > 24).length);
 const blackChipsOut = computed(() => game.chips.filter(ch => ch.color == 'black' && ch.position > 24).length);;

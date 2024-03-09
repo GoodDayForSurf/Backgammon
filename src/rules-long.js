@@ -47,18 +47,26 @@ const longs = {
 
     getAllowedHolders(game, chip) {
         const variants = longs.getNextPositionVariants(game, chip);
-        const variantsHolders = variants.map(position => longs.getChipHolder(game, chip.color, position));
+        const variantsHolders = variants.sort().map(position => longs.getChipHolder(game, chip.color, position));
 
         if(!game.diceValues) {
             return [];
         }
 
         if(game.diceValues.length === 2) {
-            return variantsHolders.filter(h => longs.isHolderAllowed(h, chip));
+            let hasAllowedStep = false;
+            return variantsHolders.filter((h, i) => {
+                if(i < 2 && longs.isHolderAllowed(h, chip)) {
+                    hasAllowedStep = true;
+                    return true;
+                }
+
+                return hasAllowedStep && longs.isHolderAllowed(h, chip);
+            });
         } else {
             let hasDeny = false;
 
-            return variantsHolders.sort().filter(h => {
+            return variantsHolders.filter(h => {
                 hasDeny = hasDeny || !longs.isHolderAllowed(h, chip);
                 return !hasDeny;
             });
