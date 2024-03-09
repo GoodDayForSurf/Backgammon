@@ -33,12 +33,6 @@ function recalcPosition(index) {
 
   ['top', 'bottom', 'left', 'right'].forEach(prop => positionStyle[prop] = 'unset');
 
-  if(index > 24) {
-    positionStyle[ isWhite ? 'bottom' : 'top'] = `0`;
-    // positionStyle[ isWhite ? 'right' : 'left'] = `calc(${isWhite ? -1 : -1} * var(--chip-size))`;
-    return;
-  }
-
   if (!isWhite) {
     index = index < 13 ? index + 12 : index - 12;
   }
