@@ -180,17 +180,24 @@ function onOutClick() {
   const variants = rules.getNextPositionVariants(game, game.selectedChip, false).filter(v => v > 24).sort();
 
   moveChip(game.selectedChip, variants[0]);
-  updateDicesAfterChipMove(selectedChip);
-  checkWin();
-  switchToNextTurn();
+  if(!hasWinner()) {
+    updateDicesAfterChipMove(game.selectedChip);
+    switchToNextTurn();
+  } else {
+    game.step = 'win';
+  }
+
 }
 
-function checkWin() {
-  const isAllChipsDone = !game.chips.find((chip) => chip.position > 1 && game.currentPlayer === chip.color)
+function hasWinner() {
+  const isAllChipsDone = !game.chips.find((chip) => chip.position < 25 && game.currentPlayer === chip.color);
   if(isAllChipsDone) {
     soundRef.value.play();
-    document.querySelector(`.win-container .${game.currentPlayer}`)?.classList.add('animate')
+    document.querySelector(`.ornament-container .${game.currentPlayer}`)?.classList.add('animate');
+    return true;
   }
+
+  return false;
 }
 </script>
 
@@ -213,22 +220,23 @@ function checkWin() {
       <ornament class="black"></ornament>
       <ornament class="white"></ornament>
     </div>
-    <div v-if="showSkip()"
-         class="skip-btn"
-         :style="{
-                    position: 'absolute',
-                    [isWhiteTurn() ? 'right' : 'left']: '25%',
+    <div class="button-center-container">
+      <div v-if="showSkip() && game.step !== 'win'"
+           class="skip-btn"
+           :style="{
                     transform: 'rotate(' + (isWhiteTurn() ? '0' : '180') + 'deg)'
                   }"
-         @click="onSkipClick"
-    >SKIP</div>
+           @click="onSkipClick"
+      >SKIP</div>
+    </div>
 
-    <div v-if="showOutBtn()"
+    <div v-if="showOutBtn() && game.step !== 'win'"
          class="out-btn"
          :style="{
                     position: 'absolute',
-                    [isWhiteTurn() ? 'right' : 'left']: '25%',
-                    transform: 'rotate(' + (isWhiteTurn() ? '0' : '180') + 'deg)'
+                    [isWhiteTurn() ? 'right' : 'left']: 'calc(var(--size) * 1)',
+                    transform: 'rotate(' + (isWhiteTurn() ? '0' : '180') + 'deg) ',
+                     ...(isWhiteTurn() ? {filter: 'invert(1)'} : {})
                   }"
          @click="onOutClick"
     ><img :src="'arrow-right-circle.svg'"></div>
@@ -264,7 +272,4 @@ function checkWin() {
   </div>
 </template>
 <style src="./App.scss" lang="scss">
-</style>
-<style lang="scss">
-
 </style>
