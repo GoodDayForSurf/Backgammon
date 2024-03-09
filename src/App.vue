@@ -22,11 +22,10 @@ const game = reactive({
   currentPlayer: Math.random() > 0.5 ? 'black' : 'white',
 });
 
-/*function getPos(i) {
-  return [15, 17][i];
+function getInitialPositions(i) {
+  return 1;
 }
-chips.forEach((chip, i) => moveChip(chip,getPos(i) || 1));*/
-
+chips.forEach((chip, i) => moveChip(chip,getInitialPositions(i)));
 let highlightedHolders = ref([]);
 const dicesRef = ref(null);
 const clickSoundRef = ref(null);
@@ -180,7 +179,7 @@ function showOutBtn() {
 }
 
 function onOutClick() {
-  const variants = rules.getNextPositionVariants(game, game.selectedChip, false).filter(v => v > 24).sort();
+  const variants = rules.getNextPositionVariants(game, game.selectedChip, false).filter(v => v > 24);
 
   moveChip(game.selectedChip, variants[0]);
   if(!hasWinner()) {

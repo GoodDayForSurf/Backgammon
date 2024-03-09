@@ -36,9 +36,10 @@ const longs = {
         } else {
             variants = dValues.filter(d => !d.disabled).map((d, i) => d.value * (i + 1))
         }
-
         return variants.filter(d => !!d)
-            .map(v => v*1 + chip.position*1).filter(v => !removeOut || v < 25);
+            .map(v => v*1 + chip.position*1)
+            .filter(v => !removeOut || v < 25)
+            .sort((a, b) => a < b ? -1 : a == b);
     },
 
     isHolderAllowed(holder, chip) {
@@ -47,7 +48,7 @@ const longs = {
 
     getAllowedHolders(game, chip) {
         const variants = longs.getNextPositionVariants(game, chip);
-        const variantsHolders = variants.sort().map(position => longs.getChipHolder(game, chip.color, position));
+        const variantsHolders = variants.map(position => longs.getChipHolder(game, chip.color, position));
 
         if(!game.diceValues) {
             return [];

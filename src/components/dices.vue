@@ -21,9 +21,9 @@ const animate = ref(false);
 const emit = defineEmits(['ready', 'rolling'])
 
 const generate = (count) => {
-  [value2.value, value1.value] = [
-    Math.floor(Math.random() * 6 + 1),
-    Math.floor(Math.random() * 6 + 1)
+  [value2.value, value1.value] = [6,6
+    /*Math.floor(Math.random() * 6 + 1),
+    Math.floor(Math.random() * 6 + 1)*/
   ].sort();
 
   if (count === 0) {
