@@ -4,17 +4,30 @@ import { longs } from './rules-long.js'
 import chipComponent  from '@/components/chip.vue'
 import dices from '@/components/dices.vue';
 import Ornament from '@/components/ornament.vue';
+import Settings from '@/components/settings.vue';
 
 const rules = longs;
-const holders = reactive(Array.from({ length: 24 }, (_,i) => ({chips: [], nmb: i + 1})));
-const chips = ['black', 'white'].flatMap(
+let savedGame =  localStorage.getItem('backgammon');
+savedGame = savedGame ? JSON.parse(savedGame) : null;
+
+if(savedGame) {
+  savedGame.chips = reactive(savedGame.chips);
+}
+
+const holders = reactive(savedGame ? savedGame.holders : Array.from({ length: 24 }, (_,i) => ({chips: [], nmb: i + 1})));
+const chips = savedGame ? savedGame.chips : ['black', 'white'].flatMap(
     (color) => Array.from({ length: 15 }).map(
-        (_, i) => (reactive({
+        (_, i) => reactive({
           color,
           id: color + '_' + i,
-        }))
+        })
     ));
-const game = reactive({
+
+savedGame?.holders.forEach(h => {
+  h.chips = h.chips.map(({id}) => savedGame.chips.find(c => c.id === id));
+});
+
+const game = reactive( savedGame || {
   chips,
   holders,
   selectedChip: null,
@@ -25,7 +38,11 @@ const game = reactive({
 function getInitialPositions(i) {
   return 1;
 }
-chips.forEach((chip, i) => moveChip(chip,getInitialPositions(i)));
+
+if(!savedGame) {
+  chips.forEach((chip, i) => moveChip(chip, getInitialPositions(i)));
+}
+
 let highlightedHolders = ref([]);
 const dicesRef = ref(null);
 const clickSoundRef = ref(null);
@@ -143,6 +160,7 @@ function switchPlayer() {
   game.currentPlayer = game.currentPlayer === 'black' ? 'white' : 'black';
   game.headIsUsed = false;
   game.step = 'waiting-roll';
+  localStorage.setItem('backgammon', JSON.stringify(game));
 }
 
 function clearSelection() {
@@ -258,18 +276,19 @@ function hasWinner() {
       </div>
       <template v-for="(chip, i) in chips">
         <chipComponent v-if="chip.position < 25"
-            :color="chip.color"
-              :class="{'selected': game.selectedChip?.id === chip.id}"
-              :position="chip.position"
-              :style="chip.offsetStyle"
-              :marker="getChipMarker(chip)"
-              @click="() => onChipClick(chip)"
+                       :color="chip.color"
+                       :class="{'selected': game.selectedChip?.id === chip.id}"
+                       :position="chip.position"
+                       :style="chip.offsetStyle"
+                       :marker="getChipMarker(chip)"
+                       @click="() => onChipClick(chip)"
         />
-        </template>
+      </template>
     </div>
-      <div class="board-middle"></div>
+    <div class="board-middle"></div>
     <div v-if="blackChipsOut" class="chip chip-out">{{blackChipsOut}}</div>
     <div v-if="whiteChipsOut" class="chip white chip-out">{{whiteChipsOut}}</div>
+    <settings></settings>
 
   </div>
 </template>
